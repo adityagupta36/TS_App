@@ -1,0 +1,84 @@
+#services:
+#  app:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    image: timesheet_image
+#    container_name: timesheet_container
+#    restart: always
+#    ports:
+#      - "8081:8081"
+#    depends_on:
+#      db:
+#        condition: service_healthy
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/timesheet_app
+#      - SPRING_DATASOURCE_USERNAME=root
+#      - SPRING_DATASOURCE_PASSWORD=Aditya@12
+#
+#    networks:
+#      - app-network
+#
+#  db:
+#    image: mysql:8.0
+#    container_name: mysql-db
+#    restart: always
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=Aditya@12
+#      - MYSQL_DATABASE=timesheet_app
+#    ports:
+#      - 3306:3306
+#    volumes:
+#      - ./data:/var/lib/mysql
+#
+#    networks:
+#      - app-network
+#
+#    healthcheck:
+#      test: [ "CMD", "mysqladmin", "ping", "-h", "db", "-uroot", "-pAditya@12" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#
+#
+#networks:
+#  app-network:
+#    driver: bridge
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8081:8081
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:3306/timesheet_app
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=Aditya@12
+    networks:
+      - springboot-mysql-network
+  mysqldb:
+    image: mysql:8.0.33
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_DATABASE=timesheet_app
+      - MYSQL_ROOT_PASSWORD=Aditya@12
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - springboot-mysql-network
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      retries: 10
+      interval: 3s
+      timeout: 30s
+volumes:
+  mysql-data:
+networks:
+  springboot-mysql-network:
+    name: springboot-mysql-network
