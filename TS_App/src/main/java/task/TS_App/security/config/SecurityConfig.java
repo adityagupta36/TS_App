@@ -38,6 +38,21 @@ public class SecurityConfig {
         return http.build();
     }
 
+/*    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+        http.authorizeHttpRequests((requests) -> requests
+                .requestMatchers("/admin/**").hasRole("ADMIN")  // Automatically converts to ROLE_ADMIN
+                .requestMatchers("/timesheet/**").hasRole("EMPLOYEE")
+                .anyRequest().authenticated());
+        http.csrf(csrf -> csrf.disable());
+        http.httpBasic(withDefaults());
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));  //no sessions stored
+        return http.build();
+    }*/
+
+
+
+
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
